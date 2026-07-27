@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Assessment Benessere Completo</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    :root {
+      --primary: #2563eb;
+      --primary-light: #dbeafe;
+      --success: #059669;
+      --success-light: #d1fae5;
+      --border: #e5e7eb;
+      --text-primary: #1f2937;
+      --text-secondary: #6b7280;
+      --text-muted: #9ca3af;
+      --surface-1: #f9fafb;
+      --surface-2: #ffffff;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: #f3f4f6;
+      color: var(--text-primary);
+      line-height: 1.6;
+    }
+    
+    .container {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+    }
+    
+    .header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    
+    .header h1 {
+      font-size: 28px;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+    }
+    
+    .header p {
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+    
+    .grid-themes {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-bottom: 2rem;
+    }
+    
+    .theme-card {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .theme-card:hover {
+      border-color: var(--primary);
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    }
+    
+    .theme-card.active {
+      border-color: var(--primary);
+      background: var(--primary-light);
+    }
+    
+    .theme-card.disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    .theme-card .emoji {
+      font-size: 28px;
+      margin-bottom: 0.5rem;
+    }
+    
+    .theme-card .title {
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+    }
+    
+    .theme-card .status {
+      font-size: 12px;
+      color: var(--success);
+      margin-top: 0.5rem;
+    }
+    
+    .panel {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2rem;
+    }
+    
+    .panel-header {
+      margin-bottom: 1.5rem;
+    }
+    
+    .panel-header h2 {
+      font-size: 18px;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+    }
+    
+    .progress-bar {
+      width: 100%;
+      height: 4px;
+      background: var(--surface-1);
+      border-radius: 2px;
+      margin: 1.5rem 0;
+      overflow: hidden;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      background: var(--primary);
+      transition: width 0.3s ease;
+      border-radius: 2px;
+    }
+    
+    .questions-container {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+    
+    .question {
+      opacity: 1;
+      transition: opacity 0.2s;
+    }
+    
+    .question label {
+      display: block;
+      margin-bottom: 0.75rem;
+      font-weight: 500;
+      font-size: 15px;
+    }
+    
+    .question.unanswered {
+      opacity: 0.6;
+    }
+    
+    .button-group {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    
+    .button-group.grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 8px;
+    }
+    
+    button {
+      padding: 10px 12px;
+      background: var(--surface-1);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 400;
+      transition: all 0.2s;
+      text-align: center;
+    }
+    
+    button:hover {
+      border-color: var(--primary);
+      background: var(--primary-light);
+    }
+    
+    button.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+      font-weight: 500;
+    }
+    
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 14px;
+      min-height: 80px;
+      resize: none;
+      font-weight: 400;
+    }
+    
+    textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-light);
+    }
+    
+    input[type="range"] {
+      width: 100%;
+    }
+    
+    .range-container {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    
+    .range-value {
+      font-size: 18px;
+      font-weight: 500;
+      min-width: 30px;
+    }
+    
+    .button-row {
+      display: flex;
+      gap: 12px;
+      margin-top: 2rem;
+      justify-content: space-between;
+    }
+    
+    button.primary {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+      font-weight: 500;
+    }
+    
+    button.primary:hover {
+      background: #1d4ed8;
+    }
+    
+    button.secondary {
+      background: var(--surface-1);
+      border-color: var(--border);
+    }
+    
+    .footer-text {
+      text-align: center;
+      margin-top: 1rem;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    
+    .report-view {
+      display: none;
+    }
+    
+    .report-view.active {
+      display: block;
+    }
+    
+    .report-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+      margin-bottom: 2rem;
+    }
+    
+    .report-card {
+      background: var(--surface-1);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem;
+      text-align: center;
+    }
+    
+    .report-card .emoji {
+      font-size: 24px;
+      margin-bottom: 0.5rem;
+    }
+    
+    .report-card .title {
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+    }
+    
+    .report-card .status {
+      font-size: 12px;
+      color: var(--success);
+    }
+    
+    .status-incomplete {
+      color: var(--text-muted);
+    }
+    
+    .success-banner {
+      background: var(--success-light);
+      border: 1px solid var(--success);
+      border-radius: 12px;
+      padding: 1.5rem;
+      color: var(--success);
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    
+    .success-banner strong {
+      display: block;
+      font-size: 16px;
+      margin-bottom: 0.5rem;
+    }
+    
+    .success-banner p {
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Assessment Benessere Completo</h1>
+      <p>10 aree, 10 domande ciascuna — percorso personalizzato</p>
+    </div>
+    
+    <div id="app-root"></div>
+  </div>
+
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    const WellnessAssessment = () => {
+      const [currentTheme, setCurrentTheme] = useState(0);
+      const [responses, setResponses] = useState({});
+      const [showReport, setShowReport] = useState(false);
+
+      const themes = [
+        { id: 'corsa', title: 'Corsa', emoji: '🏃‍♀️' },
+        { id: 'pilates', title: 'Pilates Reform', emoji: '💪' },
+        { id: 'dieta', title: 'Nutrizione & Dieta', emoji: '🥗' },
+        { id: 'beauty', title: 'Beauty Routine', emoji: '✨' },
+        { id: 'scala', title: 'Scala 0-10', emoji: '📊' },
+        { id: 'armadio', title: 'Armadio & Vestiario', emoji: '👗' },
+        { id: 'capelli', title: 'Capelli', emoji: '💇‍♀️' },
+        { id: 'tattoo', title: 'Personalità & Tattoo', emoji: '🎨' },
+        { id: 'chirurgia', title: 'Chirurgia Estetica', emoji: '🏥' },
+        { id: 'capillari', title: 'Capillari', emoji: '🩸' }
+      ];
+
+      const questions = {
+        corsa: [
+          { q: 'Attualmente pratichi corsa?', type: 'yesno' },
+          { q: 'Se sì, quanti km al mese corri?', type: 'select', options: ['0-5', '5-20', '20-50', '50+'] },
+          { q: 'Qual è il tuo principale motivo di interesse per la corsa?', type: 'select', options: ['Dimagrire', 'Tono muscolare', 'Energia e salute', 'Sfida personale', 'Socialità', 'Non so'] },
+          { q: 'Come descrivi il tuo rapporto con la corsa?', type: 'select', options: ['Amo', 'Mi piace', 'Neutrale', 'Faccio fatica', 'Non mi piace'] },
+          { q: 'Preferisci ritmo lento e continuo o più vivace?', type: 'select', options: ['Lento e lungo', 'Ritmo moderato', 'Veloce e breve', 'Misto', 'Non so'] },
+          { q: 'Preferisci correre da sola o con compagnia?', type: 'select', options: ['Sola', 'Con un\'amica', 'In gruppo', 'Indifferente'] },
+          { q: 'Quanti giorni a settimana sei disposta a dedicare alla corsa?', type: 'select', options: ['1-2', '2-3', '3-4', 'Non so'] },
+          { q: 'Qual è il principale blocco per te?', type: 'select', options: ['Manca tempo', 'Fatica fisica', 'Non so da dove partire', 'Dolori/infortuni', 'Non interessa', 'Altro'] },
+          { q: 'Che scarpe usi attualmente?', type: 'text' },
+          { q: 'Qual è il tuo obiettivo concreto?', type: 'text' }
+        ],
+        pilates: [
+          { q: 'Hai mai fatto pilates?', type: 'yesno' },
+          { q: 'Quante volte a settimana vorresti fare pilates reform?', type: 'select', options: ['1 volta', '2 volte', '3 volte', '4+ volte'] },
+          { q: 'Quali aree corporee vorresti tonificare di più?', type: 'select', options: ['Glutei', 'Core/addominali', 'Braccia', 'Schiena', 'Gambe', 'Tutto'] },
+          { q: 'Come descrivi la tua esperienza con pilates?', type: 'select', options: ['Principiante', 'Intermedia', 'Avanzata', 'Amo il metodo', 'Sono dubbioso'] },
+          { q: 'Quale aspetto di pilates ti piace di più?', type: 'select', options: ['Tonificazione', 'Allungamento', 'Consapevolezza corporea', 'Gentilezza sul corpo', 'Non so ancora'] },
+          { q: 'Preferisci sessioni brevi (30 min) o lunghe (60 min)?', type: 'select', options: ['30 minuti', '45 minuti', '60 minuti', 'Indifferente'] },
+          { q: 'Quali sono i tuoi blocchi attuali?', type: 'select', options: ['Economico', 'Tempo', 'Disponibilità location', 'Dolori', 'Motivazione', 'Nessuno'] },
+          { q: 'Quanto è importante la relazione con l\'insegnante?', type: 'select', options: ['Molto', 'Abbastanza', 'Poco', 'Posso fare da sola'] },
+          { q: 'Conosci il tuo stile di respirazione?', type: 'yesno' },
+          { q: 'Qual è il risultato che più desideri dal pilates?', type: 'text' }
+        ],
+        dieta: [
+          { q: 'Come descrivi attualmente la tua alimentazione?', type: 'select', options: ['Strutturata', 'Più o meno regolare', 'Molto libera', 'Caotica'] },
+          { q: 'Quale obiettivo corpo è prioritario per te?', type: 'select', options: ['Rassodamento', 'Tonicità muscolare', 'Leggera riduzione peso', 'Luminosità pelle', 'Energia', 'Altro'] },
+          { q: 'Quanti pasti principali fai al giorno?', type: 'select', options: ['2', '3', '4+', 'Varia molto'] },
+          { q: 'Qual è la tua relazione con il cibo?', type: 'select', options: ['Consapevole', 'Neutrale', 'A volte mi lascio andare', 'Complicata', 'Non rifletto'] },
+          { q: 'Hai sensibilità o intolleranze alimentari?', type: 'select', options: ['Nessuna', 'Lattosio', 'Glutine', 'Istamina', 'Altro', 'Sospetto ma non diagnosticato'] },
+          { q: 'Quanto proteine consumi al giorno (consapevolmente)?', type: 'select', options: ['Poca', 'Moderata', 'Buona', 'Non so'] },
+          { q: 'Quali sono i tuoi principali blocchi alimentari?', type: 'select', options: ['Poco tempo per preparare', 'Costi', 'Scarsa conoscenza', 'Amore per i dolci', 'Conflitto emotivo', 'Nessuno'] },
+          { q: 'Preferisci un approccio "rigido" o "flessibile"?', type: 'select', options: ['Rigido/tracciato', 'Flessibile consapevole', 'Completamente libero'] },
+          { q: 'Che integratori o vitamine assumi?', type: 'text' },
+          { q: 'Qual è l\'impatto che vorresti dal piano alimentare?', type: 'text' }
+        ],
+        beauty: [
+          { q: 'Come descrivi il tuo tipo di pelle?', type: 'select', options: ['Grassa', 'Mista', 'Secca', 'Sensibile', 'Normale', 'Non so'] },
+          { q: 'La tua pelle è sottile/sensibile?', type: 'yesno' },
+          { q: 'Quanto spesso attualmente segui una routine?', type: 'select', options: ['Mattina e sera', 'Solo sera', 'Saltuaria', 'Minima', 'Nessuna'] },
+          { q: 'Quali problemi cutanei ti preoccupano di più? (seleziona tutti)', type: 'multi', options: ['Secchezza', 'Sensibilità', 'Acne/imperfezioni', 'Rughe', 'Mancanza luminosità', 'Rossori'] },
+          { q: 'Usi attualmente protezione solare?', type: 'select', options: ['Sempre SPF 50+', 'Spesso SPF 30+', 'A volte', 'Raramente', 'Mai'] },
+          { q: 'Conosci gli ingredienti preferiti della tua pelle?', type: 'select', options: ['Sì, vari', 'Qualcuno', 'No', 'Mi interessa imparare'] },
+          { q: 'Quale passo della routine è più importante per te?', type: 'select', options: ['Pulizia', 'Idratazione', 'Nutrizione', 'Protezione', 'Trattamento specifico'] },
+          { q: 'Budget mensile per skincare?', type: 'select', options: ['0-30€', '30-60€', '60-100€', '100+€'] },
+          { q: 'Hai mai fatto peeling, trattamenti dermato, filler o botox?', type: 'text' },
+          { q: 'Quali sono i tuoi obiettivi beauty?', type: 'text' }
+        ],
+        scala: [
+          { q: 'Come valuti attualmente la tua soddisfazione corporea (0-10)?', type: 'number', min: 0, max: 10 },
+          { q: 'Quali aree ti danno insoddisfazione? (seleziona tutti)', type: 'multi', options: ['Peso', 'Tono muscolare', 'Forma di gambe/glutei', 'Addominali', 'Braccia', 'Postura', 'Pelle', 'Capelli', 'Abbigliamento'] },
+          { q: 'Quanto è importante la percezione psicologica vs il cambio fisico?', type: 'select', options: ['Solo psicologico', 'Più psicologico', 'Equilibrato', 'Più fisico'] },
+          { q: 'Preferisci piccoli passi frequenti o cambiamenti grandi?', type: 'select', options: ['Piccoli passi', 'Misti', 'Cambiamenti significativi', 'Non importa'] },
+          { q: 'Quanto è urgente per te questo percorso?', type: 'select', options: ['Non urgente', 'Moderato', 'Molto urgente', 'Mi sta causando sofferenza'] },
+          { q: 'Hai paura di fallire in questo percorso?', type: 'select', options: ['No', 'Un po\'', 'Molto', 'È il mio blocco principale'] },
+          { q: 'Quale sarebbe il massimo traguardo da raggiungere?', type: 'select', options: ['Sentirmi bene', 'Essere attraente', 'Essere forte', 'Essere il mio meglio', 'Trasformazione totale'] },
+          { q: 'Quanto supporto/accountability ti serve?', type: 'select', options: ['Nessuno', 'Un po\'', 'Accountability regolare', 'Full supporto', 'Preferisco da sola'] },
+          { q: 'Quali trasformazioni di altre persone ti ispirano?', type: 'text' },
+          { q: 'Se potessi scegliere 3 cose da cambiare, quali sarebbero?', type: 'text' }
+        ],
+        armadio: [
+          { q: 'Quanti capi d\'abbigliamento possiedi circa?', type: 'select', options: ['Pochi (<50)', 'Moderati (50-100)', 'Molti (100-200)', 'Moltissimi (200+)'] },
+          { q: 'Come descrivi il tuo stile personale?', type: 'select', options: ['Casual', 'Smart casual', 'Elegante', 'Sportivo', 'Misto', 'Non definito'] },
+          { q: 'Qual è la difficoltà principale con l\'armadio?', type: 'select', options: ['Troppi capi/caos', 'Abbinamenti difficili', 'Capi vecchi da rinnovare', 'Mancanza di stile', 'Budget limitato', 'Non ritrovo quello che voglio'] },
+          { q: 'Quanti "outfit pronti" hai in mente?', type: 'select', options: ['Pochi', 'Alcuni', 'Molti', 'Cambio tutto ogni volta'] },
+          { q: 'Qual è la tua comfort zone di colore?', type: 'select', options: ['Neutri (nero/bianco/beige)', 'Colori morbidi', 'Colori vivaci', 'Misto', 'Non ho una zona comfort'] },
+          { q: 'Quanto tempo dedichi al mattino a scegliere outfit?', type: 'select', options: ['2 minuti', '5 minuti', '10+ minuti', 'Cambio tutto'] },
+          { q: 'Conosci il tuo undertone di pelle?', type: 'yesno' },
+          { q: 'Preferisci seguire tendenze o creare stile personale?', type: 'select', options: ['Stile personale', 'Mix', 'Seguire tendenze'] },
+          { q: 'Budget mensile per vestiario?', type: 'select', options: ['0-50€', '50-100€', '100-200€', '200+€'] },
+          { q: 'Cosa vorresti dal tuo armadio ideale?', type: 'text' }
+        ],
+        capelli: [
+          { q: 'Come descrivi il tuo tipo di capelli?', type: 'select', options: ['Lisci', 'Ondulati', 'Ricci', 'Molto ricci/crespi', 'Secchi', 'Sottili', 'Spessi', 'Misto'] },
+          { q: 'Qual è la tua lunghezza desiderata?', type: 'select', options: ['Cortissimi', 'Corti', 'Spalle', 'Lunghi', 'Lunghissimi', 'Indifferente'] },
+          { q: 'Con che frequenza fai un taglio?', type: 'select', options: ['Ogni 4-6 settimane', 'Ogni 2-3 mesi', 'Ogni 3-6 mesi', 'Raramente', 'Non lo so'] },
+          { q: 'Hai mai colorato i capelli?', type: 'yesno' },
+          { q: 'Se sì, quale colore attuale/desiderato?', type: 'text' },
+          { q: 'Come descrivi la salute dei tuoi capelli?', type: 'select', options: ['Ottima', 'Buona', 'Media', 'Scarsa', 'Danneggiati'] },
+          { q: 'Quali sono i tuoi principali problemi capillari? (seleziona tutti)', type: 'multi', options: ['Secchezza', 'Caduta', 'Crespo', 'Opacità', 'Fragilità', 'Forfora'] },
+          { q: 'Quanto tempo dedichi alla routine capelli al giorno?', type: 'select', options: ['2-5 minuti', '5-10 minuti', '10-20 minuti', 'Dipende'] },
+          { q: 'Usi prodotti specifici per il tuo tipo?', type: 'select', options: ['Sì, di qualità', 'Sì, standard', 'No, uso quello che trovo', 'Non so cosa usare'] },
+          { q: 'Cosa vorresti dai tuoi capelli?', type: 'text' }
+        ],
+        tattoo: [
+          { q: 'Hai interesse nel farti un tattoo?', type: 'yesno' },
+          { q: 'Se sì, quale area del corpo preferisci?', type: 'select', options: ['Polso', 'Caviglia', 'Costato', 'Spalla', 'Schiena', 'Altro', 'Non ancora deciso'] },
+          { q: 'Qual è lo stile che ti attrae?', type: 'select', options: ['Realistico', 'Geometrico', 'Minimalista', 'Floreale', 'Letterario/simbolico', 'Tribal', 'Non so'] },
+          { q: 'Che significato avrebbe un tattoo per te?', type: 'select', options: ['Espressione personale', 'Ricordo importante', 'Sfida/coraggio', 'Bellezza estetica', 'Non ancora chiaro'] },
+          { q: 'Quale è il tuo freno principale?', type: 'select', options: ['Dolore', 'Permanenza', 'Paura di pentirsi', 'Non so il design', 'Limitazioni lavorative', 'Altro'] },
+          { q: 'Conosci un tatuatore che ti piace?', type: 'yesno' },
+          { q: 'Budget che vorresti investire?', type: 'select', options: ['0-100€', '100-300€', '300-500€', '500+€', 'Non so'] },
+          { q: 'Quale sarebbe il messaggio del tattoo?', type: 'text' },
+          { q: 'Altre forme di personalità che vorresti esplorare?', type: 'select', options: ['Piercing', 'Modifiche capelli', 'Stile unico', 'Nessuno', 'Multiple'] },
+          { q: 'Se un tattoo, quando vorresti farlo?', type: 'select', options: ['Subito', 'Entro 3 mesi', 'Entro 6 mesi', 'Entro 1 anno', 'Indefinito'] }
+        ],
+        chirurgia: [
+          { q: 'Hai mai considerato interventi estetici?', type: 'yesno' },
+          { q: 'Quali aree ti interessano? (seleziona tutti)', type: 'multi', options: ['Naso', 'Seno', 'Labbra', 'Mento', 'Addominali', 'Liposuzione', 'Cicatrici'] },
+          { q: 'Quale è la tua motivazione principale?', type: 'select', options: ['Armonia del viso', 'Proporzioni corporee', 'Autostima', 'Cambiamento totale', 'Non so'] },
+          { q: 'Quanto è "urgente" per te?', type: 'select', options: ['Curiosità', 'Moderato', 'Molto desiderabile', 'Diventerebbe prioritario'] },
+          { q: 'Conosci i pro/contro degli interventi di interesse?', type: 'select', options: ['Molto bene', 'Abbastanza', 'Poco', 'Per niente'] },
+          { q: 'Quale è il tuo principale blocco?', type: 'select', options: ['Paura', 'Costi', 'Recupero post-operatorio', 'Pentirsi', 'Limitazioni lavoro', 'Nessuno'] },
+          { q: 'Preferisci interventi non invasivi o chirurgici?', type: 'select', options: ['Non invasivi (filler, botox)', 'Chirurgici', 'Entrambi', 'Nessuno'] },
+          { q: 'Timeline realistica per te?', type: 'select', options: ['Entro 6 mesi', 'Entro 1 anno', 'Entro 2 anni', 'Indefinito'] },
+          { q: 'Conosci chirurghi che vorresti consultare?', type: 'text' },
+          { q: 'Quale sarebbe il risultato ideale?', type: 'text' }
+        ],
+        capillari: [
+          { q: 'Dove sono visibili i capillari che ti preoccupano?', type: 'select', options: ['Gambe', 'Viso', 'Entrambe', 'Non so'] },
+          { q: 'Quando hai iniziato a notarli?', type: 'select', options: ['Da poco', '1-2 anni fa', 'Diversi anni', 'Non ricordo'] },
+          { q: 'Quanto ti limitano nella vita quotidiana?', type: 'select', options: ['Per niente', 'Un po\'', 'Moderatamente', 'Molto'] },
+          { q: 'Quale è l\'impatto psicologico su di te?', type: 'select', options: ['Nessuno', 'Piccolo fastidio', 'Preoccupazione costante', 'Importante'] },
+          { q: 'La tua famiglia ha storia di capillari?', type: 'select', options: ['No', 'Sì, un po\'', 'Sì, molto', 'Non so'] },
+          { q: 'Quali fattori ti accorgi che li peggiorano? (seleziona tutti)', type: 'multi', options: ['Calore', 'Stare in piedi', 'Alcol', 'Ciclo mestruale', 'Gravidanza', 'Altro'] },
+          { q: 'Conosci le opzioni di trattamento?', type: 'select', options: ['Nessuna', 'Qualcuna', 'Bene', 'Ho fatto consultazioni'] },
+          { q: 'Quale tipo di intervento ti interesserebbe?', type: 'select', options: ['Laser', 'Scleroterapia', 'Radiofrequenza', 'Prodotti topici', 'Non lo so', 'Nessuno per ora'] },
+          { q: 'Budget per trattamento?', type: 'select', options: ['0-200€', '200-500€', '500-1000€', '1000+€'] },
+          { q: 'Timeline desiderata?', type: 'select', options: ['Subito', 'Entro 3 mesi', 'Entro 6 mesi', 'Entro 1 anno'] }
+        ]
+      };
+
+      useEffect(() => {
+        const saved = localStorage.getItem('wellnessResponses');
+        if (saved) setResponses(JSON.parse(saved));
+      }, []);
+
+      useEffect(() => {
+        localStorage.setItem('wellnessResponses', JSON.stringify(responses));
+      }, [responses]);
+
+      const handleResponse = (questionIndex, value) => {
+        const themeId = themes[currentTheme].id;
+        const newResponses = { ...responses };
+        if (!newResponses[themeId]) newResponses[themeId] = {};
+        newResponses[themeId][questionIndex] = value;
+        setResponses(newResponses);
+      };
+
+      const allQuestionsAnswered = responses[themes[currentTheme].id] && 
+        Object.keys(responses[themes[currentTheme].id]).length === questions[themes[currentTheme].id].length;
+
+      const canContinue = currentTheme < themes.length - 1;
+
+      const allThemesAnswered = themes.every(theme => 
+        responses[theme.id] && Object.keys(responses[theme.id]).length === questions[theme.id].length
+      );
+
+      const renderQuestion = (q, index) => {
+        const themeId = themes[currentTheme].id;
+        const value = responses[themeId]?.[index] ?? '';
+
+        if (q.type === 'yesno') {
+          return (
+            <div className="button-group">
+              <button className={value === 'sì' ? 'active' : ''} onClick={() => handleResponse(index, 'sì')}>Sì</button>
+              <button className={value === 'no' ? 'active' : ''} onClick={() => handleResponse(index, 'no')}>No</button>
+            </div>
+          );
+        }
+
+        if (q.type === 'select') {
+          return (
+            <div className="button-group grid">
+              {q.options.map(opt => (
+                <button key={opt} className={value === opt ? 'active' : ''} onClick={() => handleResponse(index, opt)}>
+                  {opt}
+                </button>
+              ))}
+            </div>
+          );
+        }
+
+        if (q.type === 'multi') {
+          const selectedArray = Array.isArray(value) ? value : (value ? [value] : []);
+          return (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              {q.options.map(opt => (
+                <label key={opt} style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                  <input 
+                    type="checkbox" 
+                    checked={selectedArray.includes(opt)}
+                    onChange={(e) => {
+                      let newArray = [...selectedArray];
+                      if (e.target.checked) {
+                        newArray.push(opt);
+                      } else {
+                        newArray = newArray.filter(item => item !== opt);
+                      }
+                      handleResponse(index, newArray);
+                    }}
+                    style={{ cursor: 'pointer', width: '18px', height: '18px' }}
+                  />
+                  <span style={{ fontSize: '14px' }}>{opt}</span>
+                </label>
+              ))}
+            </div>
+          );
+        }
+
+        if (q.type === 'number') {
+          return (
+            <div className="range-container">
+              <input type="range" min={q.min} max={q.max} value={value || q.min} 
+                onChange={e => handleResponse(index, e.target.value)} />
+              <span className="range-value">{value || q.min}</span>
+            </div>
+          );
+        }
+
+        if (q.type === 'text') {
+          return (
+            <textarea value={value} onChange={e => handleResponse(index, e.target.value)} placeholder="Scrivi la tua risposta..." />
+          );
+        }
+      };
+
+      const ThemeCard = ({ theme, index }) => {
+        const isActive = index === currentTheme;
+        const isCompleted = responses[theme.id] && Object.keys(responses[theme.id]).length === questions[theme.id].length;
+        const isDisabled = index > currentTheme;
+
+        return (
+          <div 
+            className={`theme-card ${isActive ? 'active' : ''} ${isDisabled ? 'disabled' : ''}`}
+            onClick={() => !isDisabled && setCurrentTheme(index)}
+          >
+            <div className="emoji">{theme.emoji}</div>
+            <div className="title">{theme.title}</div>
+            {isCompleted && <div className="status">✓ Completato</div>}
+          </div>
+        );
+      };
+
+      if (showReport) {
+        return (
+          <div>
+            <div className="header">
+              <h1>Report Finale</h1>
+              <p>Analisi completa del percorso</p>
+            </div>
+
+            <div className="report-grid">
+              {themes.map((theme, i) => {
+                const answered = responses[theme.id] && Object.keys(responses[theme.id]).length === questions[theme.id].length;
+                return (
+                  <div key={theme.id} className="report-card">
+                    <div className="emoji">{theme.emoji}</div>
+                    <div className="title">{theme.title}</div>
+                    <div className={`status ${answered ? '' : 'status-incomplete'}`}>
+                      {answered ? '✓ Completo' : 'Incompleto'}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {allThemesAnswered && (
+              <div className="success-banner">
+                <strong>✓ Assessment Completo!</strong>
+                <p>Tutte le sezioni sono state completate. Pronta per creare i piani d'azione personalizzati!</p>
+              </div>
+            )}
+
+            <div style={{ textAlign: 'center', gap: '12px', display: 'flex', justifyContent: 'center', marginTop: '2rem' }}>
+              <button className="secondary" onClick={() => setShowReport(false)}>← Torna all'assessment</button>
+              <button className="primary" onClick={() => {
+                const data = JSON.stringify(responses, null, 2);
+                const blob = new Blob([data], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `wellness-assessment-${new Date().toISOString().split('T')[0]}.json`;
+                a.click();
+              }}>↓ Scarica Risposte JSON</button>
+            </div>
+          </div>
+        );
+      }
+
+      return (
+        <div>
+          <div className="grid-themes">
+            {themes.map((theme, i) => (
+              <ThemeCard key={theme.id} theme={theme} index={i} />
+            ))}
+          </div>
+
+          <div className="panel">
+            <div className="panel-header">
+              <h2>{themes[currentTheme].emoji} {themes[currentTheme].title}</h2>
+              <p style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
+                Domanda {Object.keys(responses[themes[currentTheme].id] || {}).length} di {questions[themes[currentTheme].id].length}
+              </p>
+            </div>
+
+            <div className="progress-bar">
+              <div className="progress-fill" style={{
+                width: `${(Object.keys(responses[themes[currentTheme].id] || {}).length / questions[themes[currentTheme].id].length) * 100}%`
+              }} />
+            </div>
+
+            <div className="questions-container">
+              {questions[themes[currentTheme].id].map((q, idx) => (
+                <div key={idx} className={`question ${responses[themes[currentTheme].id]?.[idx] !== undefined ? '' : 'unanswered'}`}>
+                  <label>{idx + 1}. {q.q}</label>
+                  {renderQuestion(q, idx)}
+                </div>
+              ))}
+            </div>
+
+            <div className="button-row">
+              <button 
+                className="secondary"
+                onClick={() => currentTheme > 0 && setCurrentTheme(currentTheme - 1)}
+                disabled={currentTheme === 0}
+              >
+                ← Indietro
+              </button>
+
+              {currentTheme === themes.length - 1 ? (
+                <button 
+                  className="primary"
+                  onClick={() => allThemesAnswered && setShowReport(true)}
+                  disabled={!allThemesAnswered}
+                >
+                  Genera Report →
+                </button>
+              ) : (
+                <button 
+                  className="primary"
+                  onClick={() => allQuestionsAnswered && canContinue && setCurrentTheme(currentTheme + 1)}
+                  disabled={!allQuestionsAnswered || !canContinue}
+                >
+                  Avanti →
+                </button>
+              )}
+            </div>
+          </div>
+
+          <div className="footer-text">
+            Progresso totale: {themes.filter(t => responses[t.id] && Object.keys(responses[t.id]).length === questions[t.id].length).length}/{themes.length}
+          </div>
+        </div>
+      );
+    };
+
+    ReactDOM.render(<WellnessAssessment />, document.getElementById('app-root'));
+  </script>
+</body>
+</html>
