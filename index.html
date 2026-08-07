@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Elena — Percorso Tonificazione</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600;700&display=swap');
+:root{
+  --bg:#FBF7FA;
+  --surface:#FFFFFF;
+  --surface2:#FDF4FA;
+  --border:#F1E0EE;
+  --pink:#c2469b;
+  --pink-deep:#9c3480;
+  --cyan:#0d94a8;
+  --green:#3f9d6e;
+  --orange:#c2792f;
+  --text:#332633;
+  --text2:#7c6b7a;
+  --text3:#b0a0ae;
+  --radius:18px;
+  --radius-sm:12px;
+  --shadow:0 2px 10px rgba(150,60,120,0.07);
+  --shadow-md:0 8px 24px rgba(150,60,120,0.14);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{
+  font-family:'Inter',-apple-system,sans-serif;
+  background:
+    radial-gradient(circle at 8% 0%, rgba(194,70,155,.07), transparent 40%),
+    radial-gradient(circle at 100% 30%, rgba(13,148,168,.06), transparent 45%),
+    var(--bg);
+  color:var(--text);
+  min-height:100vh;
+}
+.app{max-width:480px;margin:0 auto;padding:0 0 96px}
+h1,h2,h3,.disp{font-family:'Fraunces',Georgia,serif}
+
+/* NAV */
+.nav{display:flex;padding:8px 8px 6px;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+.nb{flex:1;padding:8px 2px;border:none;border-radius:var(--radius-sm);background:transparent;color:var(--text3);font-family:inherit;font-size:9.5px;font-weight:600;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;letter-spacing:.02em}
+.nb .ic{font-size:19px}
+.nb.active{background:var(--surface2);color:var(--pink-deep)}
+
+.page{display:none;padding:16px 14px}
+.page.active{display:block}
+.ph{margin-bottom:16px}
+.pt{font-size:23px;font-weight:600;color:var(--pink-deep)}
+.ps{font-size:12.5px;color:var(--text2);margin-top:3px}
+.badge{display:inline-block;font-size:11px;font-weight:600;padding:5px 12px;border-radius:20px;margin-top:8px;background:var(--surface2);color:var(--pink-deep);border:1px solid var(--border)}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px;box-shadow:var(--shadow)}
+.card-title{font-size:10.5px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.09em;margin-bottom:10px}
+.box{background:var(--surface2);border-left:3px solid var(--pink);border-radius:10px;padding:11px 13px;font-size:12.5px;line-height:1.55;color:var(--text);margin-bottom:12px}
+.box.cy{border-left-color:var(--cyan)}
+
+/* DAY BUTTONS */
+.daygrid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:6px}
+.daygrid.wk{grid-template-columns:repeat(3,1fr)}
+.dbtn{padding:10px 4px;border:1.5px solid var(--border);border-radius:14px;background:var(--surface);color:var(--text2);font-family:inherit;font-size:10.5px;font-weight:700;cursor:pointer;text-align:center;box-shadow:var(--shadow)}
+.dbtn .ico{font-size:18px;display:block;margin-bottom:3px}
+.dbtn.sel{border-color:var(--pink);color:var(--pink-deep);background:var(--surface2);box-shadow:0 0 0 2px rgba(194,70,155,.14)}
+
+/* MEAL LIST */
+.meal-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:10px;box-shadow:var(--shadow)}
+.meal-head{padding:10px 14px;background:var(--surface2);font-size:11.5px;font-weight:700;color:var(--pink-deep)}
+.meal-row{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;padding:9px 14px;border-bottom:1px solid var(--border);font-size:12.5px}
+.meal-row:last-child{border-bottom:none}
+.meal-name{flex:1;color:var(--text)}
+.meal-qty{color:var(--text2);font-size:11px;white-space:nowrap}
+.meal-macro{font-size:10px;color:var(--text3);margin-top:2px}
+.tot-box{border-radius:var(--radius);padding:13px 15px;margin-top:2px;margin-bottom:14px;color:#fff;background:linear-gradient(135deg,var(--pink),var(--pink-deep))}
+.tot-box .tl{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;opacity:.85}
+.tot-box .tv{font-size:19px;font-weight:700;margin-top:2px}
+.tot-box .tm{font-size:11px;margin-top:4px;opacity:.9}
+
+/* EXERCISE CARDS */
+.ex-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:9px;overflow:hidden;box-shadow:var(--shadow)}
+.ex-head{display:flex;align-items:center;gap:11px;padding:12px 14px;cursor:pointer}
+.ex-num{width:28px;height:28px;border-radius:8px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--pink-deep);flex-shrink:0}
+.ex-info{flex:1;min-width:0}
+.ex-name{font-size:13px;font-weight:600;color:var(--text);line-height:1.25}
+.ex-muscle{font-size:10.5px;color:var(--text2);margin-top:1px}
+.ex-sets{font-size:11.5px;font-weight:700;color:var(--pink-deep);text-align:right;flex-shrink:0}
+.ex-sets .r{display:block;font-size:9px;font-weight:400;color:var(--text3)}
+.ex-body{display:none;border-top:1px solid var(--border);padding:12px 14px}
+.ex-body.open{display:block}
+.ex-desc{font-size:12px;color:var(--text2);line-height:1.55;background:var(--surface2);border-radius:10px;padding:10px 12px;margin-bottom:11px;border-left:3px solid var(--cyan)}
+.set-inputs{display:flex;gap:7px;flex-wrap:wrap;align-items:flex-end}
+.set-grp{display:flex;flex-direction:column;gap:3px}
+.set-grp label{font-size:9px;font-weight:700;color:var(--text2);text-transform:uppercase}
+.set-inp{width:62px;padding:7px;background:var(--surface2);border:1px solid var(--border);border-radius:9px;font-family:inherit;font-size:13px;text-align:center}
+.btn-add{padding:8px 14px;background:var(--pink-deep);color:#fff;border:none;border-radius:9px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;margin-top:11px}
+.set-log{margin-top:9px}
+.set-entry{display:flex;justify-content:space-between;align-items:center;padding:6px 10px;background:var(--surface2);border-radius:8px;margin-bottom:4px;font-size:12px}
+.set-del{background:none;border:none;color:var(--text3);cursor:pointer;font-size:15px}
+
+/* WORKOUT SELECTOR */
+.wgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.wbtn{padding:12px 8px;border:1.5px solid var(--border);border-radius:14px;background:var(--surface);font-family:inherit;font-size:11px;font-weight:700;cursor:pointer;text-align:center;color:var(--text2);box-shadow:var(--shadow)}
+.wbtn .wi{font-size:20px;display:block;margin-bottom:3px}
+.wbtn.wsel{border-color:var(--cyan);color:var(--cyan);background:#EAF7F9;box-shadow:0 0 0 2px rgba(13,148,168,.14)}
+
+/* WEIGHT/STATS */
+.form-row{display:flex;gap:8px;margin-bottom:12px}
+.form-grp{display:flex;flex-direction:column;gap:4px}
+.form-grp label{font-size:10px;font-weight:700;color:var(--text2);text-transform:uppercase}
+.form-inp{padding:9px 11px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;font-family:inherit;font-size:13px}
+.btn-primary{padding:9px 16px;background:var(--pink-deep);color:#fff;border:none;border-radius:10px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap}
+.log-entry{display:flex;justify-content:space-between;align-items:center;padding:8px 11px;background:var(--surface2);border-radius:10px;margin-bottom:6px;font-size:12.5px}
+.log-del{background:none;border:none;color:var(--text3);cursor:pointer;font-size:15px}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:10px}
+.stat-box{background:var(--surface2);border-radius:12px;padding:12px;text-align:center;border:1px solid var(--border)}
+.stat-val{font-size:19px;font-weight:700;color:var(--pink-deep)}
+.stat-lbl{font-size:9.5px;font-weight:600;color:var(--text2);text-transform:uppercase;margin-top:2px}
+
+/* INTEGRATORI */
+.i-card{border-radius:var(--radius);padding:13px 14px;margin-bottom:9px;border:1px solid;box-shadow:var(--shadow);display:flex;gap:11px;align-items:flex-start}
+.i-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0}
+.i-title{font-size:13px;font-weight:700}
+.i-sub{font-size:11px;margin-top:3px;line-height:1.4}
+.i-when{font-size:10.5px;font-weight:700;margin-top:4px;opacity:.8}
+
+.skincare-step{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)}
+.skincare-step:last-child{border-bottom:none}
+.step-n{font-weight:700;color:var(--cyan);font-size:12px;min-width:20px}
+.step-t{font-size:12.5px;font-weight:600}
+.step-p{font-size:11px;color:var(--text2);margin-top:1px}
+
+/* SPESA */
+.spesa-cat{font-size:11px;font-weight:700;color:var(--pink-deep);text-transform:uppercase;letter-spacing:.06em;padding:11px 0 7px}
+.spesa-item{display:flex;align-items:center;gap:11px;padding:8px 0;border-bottom:1px solid var(--border)}
+.spesa-item:last-child{border-bottom:none}
+.spesa-item input[type=checkbox]{width:19px;height:19px;flex-shrink:0;cursor:pointer;accent-color:var(--pink-deep)}
+.spesa-name{flex:1;font-size:13px;color:var(--text)}
+.spesa-name.done{text-decoration:line-through;color:var(--text3)}
+.spesa-qty{font-size:11px;color:var(--text2)}
+.progress-bar{height:8px;background:var(--surface2);border-radius:20px;overflow:hidden;border:1px solid var(--border)}
+.progress-fill{height:100%;border-radius:20px;background:linear-gradient(90deg,var(--pink),var(--cyan));transition:width .4s}
+.progress-txt{display:flex;justify-content:space-between;font-size:11.5px;color:var(--text2);margin-bottom:6px}
+
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--text);color:#fff;padding:9px 20px;border-radius:20px;font-size:12.5px;font-weight:600;opacity:0;transition:all .3s;z-index:999;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.empty{text-align:center;padding:24px 14px;color:var(--text2);font-size:12.5px}
+</style>
+</head>
+<body>
+<div class="app">
+  <nav class="nav">
+    <button class="nb active" onclick="goPage('oggi')" id="n-oggi"><span class="ic">🌸</span><span>OGGI</span></button>
+    <button class="nb" onclick="goPage('scheda')" id="n-scheda"><span class="ic">🏋️</span><span>SCHEDA</span></button>
+    <button class="nb" onclick="goPage('peso')" id="n-peso"><span class="ic">⚖️</span><span>PESO</span></button>
+    <button class="nb" onclick="goPage('integr')" id="n-integr"><span class="ic">💊</span><span>INTEGR.</span></button>
+    <button class="nb" onclick="goPage('spesa')" id="n-spesa"><span class="ic">🛒</span><span>SPESA</span></button>
+  </nav>
+
+  <!-- ===== OGGI ===== -->
+  <div id="p-oggi" class="page active">
+    <div class="ph">
+      <div class="pt">Ciao Elena 🌸</div>
+      <div class="ps">Ricomposizione corporea — più tono, non dimagrimento</div>
+      <span class="badge">50.85 kg · Grasso 20.7% · Muscolo 42.4% · Obiettivo: +muscolo</span>
+    </div>
+    <div class="box">
+      <b>Piano 3 settimane:</b> media ~1800 kcal (Sett.1) → ~1850 (Sett.2) → ~1900 (Sett.3), proteine 110-115g/giorno costanti. Il peso può salire leggermente: è muscolo, non è un problema.
+    </div>
+    <div class="daygrid wk">
+      <button class="dbtn" onclick="selDay('lun')" id="d-lun"><span class="ico">💪</span>LUN</button>
+      <button class="dbtn" onclick="selDay('mar')" id="d-mar"><span class="ico">🏃</span>MAR</button>
+      <button class="dbtn" onclick="selDay('mer')" id="d-mer"><span class="ico">🧘</span>MER</button>
+      <button class="dbtn" onclick="selDay('gio')" id="d-gio"><span class="ico">💪</span>GIO</button>
+      <button class="dbtn" onclick="selDay('ven')" id="d-ven"><span class="ico">😌</span>VEN</button>
+      <button class="dbtn" onclick="selDay('sab')" id="d-sab"><span class="ico">🧘</span>SAB</button>
+      <button class="dbtn" onclick="selDay('dom')" id="d-dom"><span class="ico">😌</span>DOM</button>
+    </div>
+    <div id="meal-out"></div>
+  </div>
+
+  <!-- ===== SCHEDA ===== -->
+  <div id="p-scheda" class="page">
+    <div class="ph">
+      <div class="pt">Scheda Palestra 🏋️</div>
+      <div class="ps">2x/settimana — tocca ogni esercizio per dettagli e registra i pesi</div>
+    </div>
+    <div class="wgrid">
+      <button class="wbtn" onclick="selW('ua')" id="w-ua"><span class="wi">🌷</span>Upper A<br>(Lun Sett.1/3)</button>
+      <button class="wbtn" onclick="selW('ub')" id="w-ub"><span class="wi">🌷</span>Upper B<br>(Lun Sett.2)</button>
+      <button class="wbtn" onclick="selW('la')" id="w-la"><span class="wi">🍑</span>Lower A<br>(Gio Sett.1/3)</button>
+      <button class="wbtn" onclick="selW('lb')" id="w-lb"><span class="wi">🍑</span>Lower B<br>(Gio Sett.2)</button>
+    </div>
+    <div id="workout-out"></div>
+  </div>
+
+  <!-- ===== PESO ===== -->
+  <div id="p-peso" class="page">
+    <div class="ph">
+      <div class="pt">Peso e Bilancia ⚖️</div>
+      <div class="ps">Ripesarsi 1 volta a settimana, stessa ora, a digiuno</div>
+    </div>
+    <div id="peso-stats"></div>
+    <div class="card">
+      <div class="card-title">Peso (kg)</div>
+      <div class="form-row">
+        <div class="form-grp" style="flex:1"><label>Data</label><input type="date" id="wd" class="form-inp" style="font-size:12px"></div>
+        <div class="form-grp" style="width:78px"><label>Kg</label><input type="number" id="wv" class="form-inp" placeholder="50.8" step="0.1" min="35" max="120"></div>
+        <div class="form-grp" style="justify-content:flex-end"><label>&nbsp;</label><button class="btn-primary" onclick="saveW()">+</button></div>
+      </div>
+      <div id="wlog"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Dati bilancia impedenziometrica</div>
+      <div class="form-row">
+        <input type="number" id="bfat" class="form-inp" placeholder="Grasso % (es. 20.5)" style="flex:1">
+        <input type="number" id="bmus" class="form-inp" placeholder="Muscolo % (es. 42.8)" style="flex:1">
+      </div>
+      <button class="btn-primary" style="width:100%" onclick="saveBilancia()">Salva dati bilancia</button>
+      <div id="bilog" style="margin-top:10px"></div>
+    </div>
+  </div>
+
+  <!-- ===== INTEGRATORI & BEAUTY ===== -->
+  <div id="p-integr" class="page">
+    <div class="ph">
+      <div class="pt">Integratori & Beauty 💊</div>
+      <div class="ps">Basati sugli esami del sangue del 29/07/2026</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Schema giornaliero</div>
+      <div id="integr-schema"></div>
+    </div>
+    <div id="integr-cards"></div>
+
+    <div class="card" style="margin-top:4px">
+      <div class="card-title" style="color:var(--orange)">📋 Dal referto sangue (non urgente)</div>
+      <div style="font-size:12.5px;line-height:1.5;margin-bottom:8px"><b>Omocisteina 13.80</b> (limite 13.56) — lievemente sopra, da segnalare al medico. B6 aggiunta come supporto.</div>
+      <div style="font-size:12.5px;line-height:1.5"><b>Testosterone 0.03 ng/mL</b> — molto basso, verosimilmente legato alla spirale ormonale. Rallenta la velocità di crescita muscolare ma non la impedisce.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🌅 Skincare mattina (5 min)</div>
+      <div id="am-routine"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">🌙 Skincare sera (10 min)</div>
+      <div id="pm-routine"></div>
+    </div>
+  </div>
+
+  <!-- ===== SPESA ===== -->
+  <div id="p-spesa" class="page">
+    <div class="ph">
+      <div class="pt">Lista Spesa 🛒</div>
+      <div class="ps">Spunta man mano che compri</div>
+    </div>
+    <div class="card" style="margin-bottom:12px">
+      <div class="progress-txt"><span id="spesa-done">0 articoli completati</span><span id="spesa-pct" style="font-weight:700;color:var(--pink-deep)">0%</span></div>
+      <div class="progress-bar"><div class="progress-fill" id="spesa-bar" style="width:0%"></div></div>
+      <div style="display:flex;gap:8px;margin-top:12px">
+        <button class="btn-primary" style="flex:1;font-size:12.5px" onclick="resetSpesa()">Azzera tutto</button>
+        <button style="flex:1;padding:9px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;font-family:inherit;font-size:12.5px;font-weight:700;cursor:pointer;color:var(--text)" onclick="checkAll()">Segna tutto ✓</button>
+      </div>
+    </div>
+    <div id="spesa-out"></div>
+  </div>
+
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── DATI PASTI (Settimana 1) ─────────────────────────────
+const EXTRA = [
+  {n:"Olio EVO extra (condimento)",q:"10 ml",k:90,p:0,c:0,f:10},
+  {n:"Mandorle o noci",q:"25 g",k:145,p:5,c:5,f:12},
+  {n:"Pane integrale",q:"40 g",k:90,p:4,c:16,f:1},
+  {n:"Frutta fresca a piacere",q:"150 g",k:80,p:0.5,c:20,f:0},
+  {n:"Fiocchi d'avena (colazione/yogurt)",q:"35 g",k:131,p:4.5,c:23,f:2.5},
+];
+
+const MEALS = {
+  lun:{label:"Lunedì", activity:"Palestra Upper A 💪", tot:{k:1926,p:124,c:198,f:73},
+    tip:"Giorno palestra Upper A — petto alto + spalle. Lo spuntino post-workout va consumato entro 1h dall'allenamento.",
+    sections:[
+      {t:"Colazione · 07:00", items:[
+        {n:"Uova intere",q:"2 pezzi (100g)",k:155,p:13,c:1,f:11},
+        {n:"Pane integrale",q:"40g",k:90,p:4,c:16,f:1},
+        {n:"Pomodoro",q:"80g",k:14,p:1,c:3,f:0},
+      ]},
+      {t:"Spuntino · 10:00", items:[
+        {n:"Mandorle",q:"20g",k:116,p:4,c:2,f:10},
+        {n:"Mela",q:"120g",k:62,p:0,c:16,f:0},
+      ]},
+      {t:"Pranzo · 13:00", items:[
+        {n:"Petto di pollo cotto",q:"120g",k:165,p:32,c:0,f:3.5},
+        {n:"Riso integrale cotto",q:"120g",k:156,p:3,c:34,f:1},
+        {n:"Broccoli",q:"150g",k:50,p:4,c:10,f:0},
+        {n:"Olio EVO",q:"5ml",k:45,p:0,c:0,f:5},
+      ]},
+      {t:"Spuntino post-palestra · 16:00", items:[
+        {n:"Proteine whey polvere",q:"25g",k:92,p:21,c:1,f:1},
+        {n:"Banana",q:"100g",k:90,p:1,c:23,f:0},
+      ]},
+      {t:"Cena · 19:30", items:[
+        {n:"Salmone fresco",q:"100g",k:200,p:22,c:0,f:12},
+        {n:"Patate dolci al forno",q:"120g",k:103,p:1.5,c:24,f:0},
+        {n:"Spinaci al vapore",q:"100g",k:25,p:3,c:3.6,f:0},
+        {n:"Olio EVO",q:"3ml",k:27,p:0,c:0,f:3},
+      ]},
+    ]},
+  mar:{label:"Martedì", activity:"Corsa leggera 🏃", tot:{k:1693,p:110,c:182,f:60},
+    tip:"Giorno corsa leggera zona 2 — dovresti riuscire a parlare mentre corri.",
+    sections:[
+      {t:"Colazione · 07:00", items:[
+        {n:"Yogurt greco 0%",q:"170g",k:102,p:18,c:6,f:0},
+        {n:"Muesli integrale",q:"35g",k:125,p:3.5,c:25,f:2},
+        {n:"Frutti di bosco",q:"60g",k:30,p:0.5,c:7,f:0},
+      ]},
+      {t:"Spuntino · 10:00", items:[
+        {n:"Formaggio fresco magro",q:"50g",k:67,p:9,c:1,f:3},
+        {n:"Crackers integrali",q:"20g",k:70,p:2,c:12,f:2},
+      ]},
+      {t:"Pranzo · 13:00", items:[
+        {n:"Branzino filetto",q:"130g",k:145,p:21,c:0,f:7},
+        {n:"Orzo perlato cotto",q:"100g",k:120,p:3,c:27,f:0.5},
+        {n:"Zucchine grigliate",q:"150g",k:30,p:2,c:5,f:0},
+        {n:"Olio EVO",q:"5ml",k:45,p:0,c:0,f:5},
+      ]},
+      {t:"Spuntino · 16:00", items:[
+        {n:"Mela",q:"130g",k:68,p:0.4,c:17,f:0},
+        {n:"Burro di arachidi 100%",q:"12g",k:72,p:3,c:2,f:6},
+      ]},
+      {t:"Cena · 19:30", items:[
+        {n:"Petto di tacchino",q:"120g",k:150,p:30,c:0,f:3},
+        {n:"Insalata mista",q:"100g",k:20,p:1,c:4,f:0},
+        {n:"Pane integrale",q:"30g",k:68,p:3,c:12,f:0.5},
+        {n:"Olio EVO",q:"5ml",k:45,p:0,c:0,f:5},
+      ]},
+    ]},
+  mer:{label:"Mercoledì", activity:"Pilates Reform 🧘", tot:{k:1816,p:112,c:210,f:58},
+    tip:"Giorno Pilates — il pranzo post-lezione è il pasto più ricco di carboidrati della giornata.",
+    sections:[
+      {t:"Colazione · 07:00", items:[
+        {n:"Fiocchi d'avena",q:"40g",k:150,p:5,c:27,f:3},
+        {n:"Latte parz. scremato",q:"150ml",k:72,p:5,c:7,f:2},
+        {n:"Banana",q:"80g",k:72,p:1,c:18,f:0},
+      ]},
+      {t:"Spuntino · 10:00", items:[
+        {n:"Ricotta vaccina",q:"80g",k:124,p:9.5,c:3,f:8},
+        {n:"Miele",q:"8g",k:24,p:0,c:6.5,f:0},
+      ]},
+      {t:"Pranzo post-Pilates · 13:00", items:[
+        {n:"Pasta integrale",q:"70g secca",k:245,p:9,c:47,f:1.5},
+        {n:"Tonno al naturale sgocciolato",q:"80g",k:92,p:20,c:0,f:1},
+        {n:"Pomodorini",q:"100g",k:18,p:1,c:4,f:0},
+        {n:"Olio EVO",q:"5ml",k:45,p:0,c:0,f:5},
+      ]},
+      {t:"Spuntino · 16:00", items:[
+        {n:"Yogurt greco 0%",q:"150g",k:90,p:16,c:5,f:0},
+        {n:"Noci",q:"10g",k:65,p:1.5,c:1.5,f:6},
+      ]},
+      {t:"Cena · 19:30", items:[
+        {n:"Merluzzo filetto",q:"140g",k:112,p:26,c:0,f:1},
+        {n:"Patate lesse",q:"130g",k:98,p:2,c:22,f:0},
+        {n:"Fagiolini",q:"120g",k:28,p:2,c:5,f:0},
+        {n:"Olio EVO",q:"5ml",k:45,p:0,c:0,f:5},
+      ]},
+    ]},
+  gio:{label:"Giovedì", activity:"Palestra Lower A 💪", tot:{k:1828,p:123,c:169,f:72},
+    tip:"Giorno palestra Lower A — quadricipiti, glutei, polpacci. Il giorno più impegnativo della settimana.",
+    sections:[
+      {t:"Colazione · 07:00", items:[
+        {n:"Uova intere",q:"2 pezzi (100g)",k:155,p:13,c:1,f:11},
+        {n:"Avocado",q:"50g",k:80,p:1,c:4,f:7},
+        {n:"Pane integrale",q:"30g",k:68,p:3,c:12,f:0.5},
+      ]},
+      {t:"Spuntino · 10:00", items:[
+        {n:"Arancia",q:"160g",k:66,p:1,c:16,f:0},
+        {n:"Mandorle",q:"15g",k:87,p:3,c:1.5,f:7.5},
+      ]},
+      {t:"Pranzo · 13:00", items:[
+        {n:"Petto di pollo cotto",q:"120g",k:165,p:32,c:0,f:3.5},
+        {n:"Quinoa cotta",q:"90g",k:120,p:4.5,c:21,f:2},
+        {n:"Carote + peperoni",q:"150g",k:45,p:1.5,c:9,f:0},
+        {n:"Olio EVO",q:"4ml",k:36,p:0,c:0,f:4},
+      ]},
+      {t:"Spuntino post-palestra · 16:00", items:[
+        {n:"Proteine whey polvere",q:"25g",k:92,p:21,c:1,f:1},
+        {n:"Fragole",q:"100g",k:32,p:0.7,c:7.7,f:0},
+      ]},
+      {t:"Cena · 19:30", items:[
+        {n:"Manzo magro macinato",q:"100g",k:165,p:24,c:0,f:7},
+        {n:"Riso basmati cotto",q:"100g",k:130,p:2.7,c:28,f:0.5},
+        {n:"Zucchine",q:"120g",k:24,p:1.5,c:4,f:0},
+        {n:"Olio EVO",q:"3ml",k:27,p:0,c:0,f:3},
+      ]},
+    ]},
+  ven:{label:"Venerdì", activity:"Riposo 😌", tot:{k:1782,p:128,c:159,f:69},
+    tip:"Giorno di riposo dalla palestra — il muscolo cresce anche a riposo, non saltare i pasti.",
+    sections:[
+      {t:"Colazione · 07:00", items:[
+        {n:"Yogurt greco 0%",q:"170g",k:102,p:18,c:6,f:0},
+        {n:"Miele",q:"10g",k:30,p:0,c:8,f:0},
+        {n:"Noci",q:"12g",k:78,p:1.8,c:1.6,f:7.5},
+      ]},
+      {t:"Spuntino · 10:00", items:[
+        {n:"Cracker integrali",q:"25g",k:88,p:2.5,c:15,f:2},
+        {n:"Formaggio fresco magro",q:"40g",k:54,p:7,c:1,f:2.4},
+      ]},
+      {t:"Pranzo · 13:00", items:[
+        {n:"Pesce spada",q:"120g",k:220,p:26,c:0,f:12.6},
+        {n:"Farro cotto",q:"90g",k:115,p:4,c:24,f:0.5},
+        {n:"Insalata verde",q:"80g",k:12,p:1,c:2,f:0},
+        {n:"Olio EVO",q:"4ml",k:36,p:0,c:0,f:4},
+      ]},
+      {t:"Spuntino · 16:00", items:[
+        {n:"Latte parz. scremato",q:"200ml",k:96,p:6.6,c:9.6,f:3},
+        {n:"Biscotti proteici",q:"1 pezzo (25g)",k:92,p:10,c:7,f:2.5},
+      ]},
+      {t:"Cena · 19:30", items:[
+        {n:"Petto di pollo",q:"120g",k:165,p:32,c:0,f:3.5},
+        {n:"Verdure grigliate miste",q:"180g",k:45,p:2,c:9,f:0},
+        {n:"Pane integrale",q:"30g",k:68,p:3,c:12,f:0.5},
+        {n:"Olio EVO",q:"5ml",k:45,p:0,c:0,f:5},
+      ]},
+    ]},
+  sab:{label:"Sabato", activity:"Pilates/Corsa — pasto libero 🧘", tot:{k:1748,p:86.5,c:202,f:63.8},
+    tip:"Giorno flessibile con pasto libero — è funzionale, non va eliminato. Proteina leggermente più bassa, va bene così una volta a settimana.",
+    sections:[
+      {t:"Colazione · 07:00", items:[
+        {n:"Uova intere",q:"2 pezzi",k:155,p:13,c:1,f:11},
+        {n:"Pane integrale tostato",q:"40g",k:90,p:4,c:16,f:1},
+      ]},
+      {t:"Spuntino", items:[
+        {n:"Frutta fresca mista",q:"150g",k:70,p:1,c:17,f:0},
+      ]},
+      {t:"Pranzo — pasto libero", items:[
+        {n:"Pizza margherita integrale fatta in casa*",q:"~200g",k:480,p:20,c:62,f:16},
+      ]},
+      {t:"Spuntino", items:[
+        {n:"Cioccolato fondente 70%",q:"20g",k:107,p:1.5,c:8,f:7},
+      ]},
+      {t:"Cena", items:[
+        {n:"Petto di pollo grigliato",q:"110g",k:150,p:29,c:0,f:3},
+        {n:"Riso bianco cotto",q:"100g",k:130,p:2.5,c:28,f:0.3},
+        {n:"Verdure miste",q:"120g",k:30,p:1.5,c:6,f:0},
+      ]},
+    ]},
+  dom:{label:"Domenica", activity:"Riposo totale 😌", tot:{k:1634,p:88.5,c:194.5,f:50.5},
+    tip:"Riposo totale — appetito naturalmente più basso, va bene. Aggiungi un frutto extra se c'è fame.",
+    sections:[
+      {t:"Colazione · 08:00", items:[
+        {n:"Fiocchi d'avena",q:"40g",k:150,p:5,c:27,f:3},
+        {n:"Latte parz. scremato",q:"150ml",k:72,p:5,c:7,f:2},
+        {n:"Mela",q:"100g",k:52,p:0,c:14,f:0},
+      ]},
+      {t:"Pranzo in famiglia · 13:00", items:[
+        {n:"Pasta integrale al ragù di carne magra",q:"70g pasta + 90g carne",k:480,p:28,c:55,f:12},
+        {n:"Parmigiano grattugiato",q:"10g",k:40,p:3.5,c:0,f:3},
+      ]},
+      {t:"Spuntino", items:[
+        {n:"Yogurt greco 0%",q:"150g",k:90,p:16,c:5,f:0},
+      ]},
+      {t:"Cena leggera · 19:00", items:[
+        {n:"Brodo vegetale",q:"300ml",k:30,p:1,c:5,f:0},
+        {n:"Formaggio fresco magro",q:"70g",k:94,p:12,c:1.5,f:4},
+        {n:"Pane integrale",q:"40g",k:90,p:4,c:16,f:1},
+      ]},
+    ]},
+};
+
+// ─── DATI SCHEDA PALESTRA ─────────────────────────────
+const WK = {
+  ua:{label:"UPPER A — Petto alto + Spalle", sub:"Lunedì Sett. 1 e 3",
+    why:"Il fascio clavicolare (alto) del pettorale crea un effetto \"sollevante\" naturale sotto il seno. Aggiungiamo deltoidi e postura per evitare spalle chiuse in avanti.",
+    ex:[
+      {n:"Spinte manubri panca inclinata 30-45°",m:"Petto alto — esercizio PRINCIPALE",s:"4×10-12",r:"90s",d:"Manubri 4-6 kg. Gomiti a 45° dal busto, spingi in alto senza bloccare i gomiti a fine corsa."},
+      {n:"Croci su panca inclinata",m:"Petto alto — isolamento",s:"3×12-15",r:"60s",d:"Manubri 2-3 kg. Braccia leggermente flesse, apri \"ad abbraccio\" e richiudi sentendo lo stiramento."},
+      {n:"Shoulder press manubri (seduta)",m:"Deltoidi",s:"3×10-12",r:"90s",d:"Manubri 3-4 kg. Spingi sopra la testa senza inarcare la schiena, ritorno controllato."},
+      {n:"Push-up su ginocchia (assistito)",m:"Petto + core",s:"3×8-10",r:"60s",d:"Mani leggermente più larghe delle spalle. Scendi in 3 sec, petto quasi sfiora il tappetino."},
+      {n:"Face pull ai cavi",m:"Postura, deltoide posteriore",s:"3×15",r:"60s",d:"Corda ai cavi altezza viso. Tira verso il naso, stringi le scapole 1 sec. Fondamentale per la postura."},
+      {n:"Plank",m:"Core, stabilità",s:"3×30-40\"",r:"45s",d:"Avambracci a terra, corpo in linea retta, addome contratto."},
+    ]},
+  ub:{label:"UPPER B — Dorso + Spalle post.", sub:"Lunedì Sett. 2",
+    why:"Il dorso alto tiene le spalle aperte e indietro: rinforzarlo in equilibrio con la Scheda A produce una postura eretta che di per sé solleva il seno.",
+    ex:[
+      {n:"Lat machine (presa larga, al petto)",m:"Dorso — esercizio PRINCIPALE",s:"4×10-12",r:"90s",d:"Carico leggero-moderato. Tira la barra verso la parte alta del petto, spalle basse e indietro."},
+      {n:"Rematore manubrio su panca",m:"Dorso medio",s:"3×12",r:"75s",d:"Manubrio 4-5 kg. Un ginocchio e una mano appoggiati sulla panca, tira verso il fianco."},
+      {n:"Reverse fly su panca inclinata",m:"Deltoide posteriore, romboidi",s:"3×15",r:"60s",d:"Manubri 1.5-2 kg. Busto inclinato in avanti, apri le braccia lateralmente stringendo le scapole."},
+      {n:"Spinte manubri panca piana",m:"Petto — equilibrio con Scheda A",s:"3×12",r:"75s",d:"Manubri 4-5 kg. Lavora il petto a un angolo diverso dalla Scheda A."},
+      {n:"Alzate laterali",m:"Deltoide laterale, larghezza spalle",s:"3×15",r:"60s",d:"Manubri 2-3 kg. Braccia leggermente flesse, solleva fino all'altezza spalla."},
+      {n:"Superman a terra",m:"Catena posteriore, postura",s:"3×12",r:"45s",d:"Pancia in giù, solleva contemporaneamente braccia e gambe, tieni 2 sec."},
+    ]},
+  la:{label:"LOWER A — Quad + Glutei + Polpacci", sub:"Giovedì Sett. 1 e 3",
+    why:"Base costruttiva per gambe più muscolose: movimenti multiarticolari + isolamento su femorali e polpacci, spesso responsabili dell'aspetto \"sottile\" della gamba.",
+    ex:[
+      {n:"Squat goblet (kettlebell/manubrio al petto)",m:"Quad/glutei — esercizio PRINCIPALE",s:"4×10-12",r:"90s",d:"Peso 6-8 kg. Scendi profondo (90°+), glutei indietro."},
+      {n:"Affondi camminati con manubri",m:"Glutei/quad",s:"3×10/gamba",r:"75s",d:"Manubri 3-5 kg/mano. Ginocchio davanti a 90°, spingi con il tallone."},
+      {n:"Leg press (o step-up su panca)",m:"Quad",s:"3×12-15",r:"90s",d:"Scendi fino 90°, spinta controllata, no blocco ginocchia a fine corsa."},
+      {n:"Leg curl (femorali)",m:"Femorali",s:"3×12-15",r:"60s",d:"Curl gambe verso i glutei, squeeze 1 sec."},
+      {n:"Calf raise in piedi",m:"Polpacci",s:"4×15-20",r:"45s",d:"Sali sulle punte, pausa 1-2 sec in alto, scendi lento."},
+      {n:"Plank laterale",m:"Core, stabilità dell'anca",s:"3×30\"/lato",r:"30s",d:"Supporto ai movimenti sopra, mantieni il corpo in linea retta."},
+    ]},
+  lb:{label:"LOWER B — Glutei + Femorali + Polpacci", sub:"Giovedì Sett. 2",
+    why:"Catena posteriore: glutei e femorali danno forma alla parte posteriore della coscia. L'hip thrust è l'esercizio più efficace in assoluto per i glutei.",
+    ex:[
+      {n:"Hip thrust (bilanciere/manubrio sui fianchi)",m:"Glutei — esercizio PRINCIPALE",s:"4×10-12",r:"90s",d:"Schiena su panca, spingi i fianchi in alto, squeeze glutei 2 sec in cima."},
+      {n:"Stacco rumeno (RDL) con manubri",m:"Glutei/femorali",s:"3×10-12",r:"90s",d:"Manubri 5-8 kg. Gambe quasi tese, hinge sui fianchi, schiena dritta."},
+      {n:"Affondi bulgari",m:"Glutei/quad",s:"3×10/gamba",r:"75s",d:"Piede dietro su panca, scendi finché il ginocchio dietro sfiora terra."},
+      {n:"Leg extension",m:"Quad isolamento",s:"3×12-15",r:"60s",d:"Estendi le gambe, squeeze 1 sec in cima, ritorno controllato."},
+      {n:"Calf raise da seduta (soleo)",m:"Polpacci",s:"4×15-20",r:"45s",d:"Peso sulle ginocchia se disponibile, altrimenti bodyweight ad alte ripetizioni."},
+      {n:"Dead bug",m:"Core",s:"3×10/lato",r:"30s",d:"Schiena a terra, braccio e gamba opposti si estendono insieme, lentamente."},
+    ]},
+};
+
+// ─── INTEGRATORI ─────────────────────────────
+const INTEGR_SCHEMA = [
+  ["🌅 Mattina","Multivitaminico · Vit. D3 2000UI · Collagene 10g · Vit. C 500mg"],
+  ["☕ Lun/Mer/Ven","Vitamina B12 500mcg · Selenio"],
+  ["🍽️ Pranzo","Omega-3 1500mg · Vit. C 500mg"],
+  ["💪 Qualsiasi momento","Creatina monoidrato 3-5g"],
+  ["🌤️ Durante il giorno","Vitamina B6 10-25mg"],
+  ["🍽️ Cena","Zinco 15-25mg"],
+  ["🌙 Prima di dormire","Magnesio glicinato 300-400mg"],
+];
+
+const INTEGR_CARDS = [
+  {icon:"💪",title:"Creatina monoidrato",bg:"#FDF0F7",bd:"#F1CBE3",tc:"#9c3480",note:"NUOVO — forza e crescita muscolare indipendentemente dai livelli ormonali. Utile col testosterone basso rilevato. Funzione renale perfetta, nessuna controindicazione.",dose:"3-5 g/giorno, qualsiasi momento"},
+  {icon:"🧬",title:"Vitamina B6",bg:"#EAF7F9",bd:"#BFE6EC",tc:"#0d94a8",note:"NUOVO — supporto metabolismo omocisteina (13.80, lievemente sopra range 4.44-13.56). Da confermare col medico.",dose:"10-25 mg/giorno"},
+  {icon:"☀️",title:"Vitamina D3",bg:"#FFF7E8",bd:"#F3E1B8",tc:"#c2792f",note:"Ossa, immunità, umore — valore attuale 36 (\"sufficiente\"), da mantenere.",dose:"2000 UI · mattina"},
+  {icon:"✨",title:"Collagene marino",bg:"#FDF0F7",bd:"#F1CBE3",tc:"#9c3480",note:"Pelle, capelli, articolazioni.",dose:"10 g · mattina"},
+  {icon:"🐟",title:"Omega-3",bg:"#EAF7F9",bd:"#BFE6EC",tc:"#0d94a8",note:"Antinfiammatorio, pelle, cardiovascolare.",dose:"1500 mg · pranzo"},
+  {icon:"🛡️",title:"Zinco",bg:"#F0F7F0",bd:"#CDE6CD",tc:"#3f9d6e",note:"Pelle, immunità, capelli — valore attuale 798, normale.",dose:"15-25 mg · cena"},
+  {icon:"😴",title:"Magnesio glicinato",bg:"#EAF7F9",bd:"#BFE6EC",tc:"#0d94a8",note:"Recupero muscolare, qualità del sonno.",dose:"300-400 mg · sera"},
+];
+
+const AM_ROUTINE = [
+  ["1","Detergere","Gentle cleanser per pelle sensibile"],
+  ["2","Tonificare","Toner essence per pelle sensibile"],
+  ["3","Siero","Vitamina C pura 10-15%"],
+  ["4","Idratare","Moisturizer senza profumo"],
+  ["5","Proteggere","SPF 50+ — fondamentale con Vit.C e Retinol nella routine"],
+];
+const PM_ROUTINE = [
+  ["1","Doppia detersione","Oil cleanser + gentle cleanser"],
+  ["2","Tonificare","Toner sensibile"],
+  ["3","Trattamento","Retinol 0.25% Lun/Mer/Ven — Niacinamide 5% altri giorni"],
+  ["4","Contorno occhi","Eye cream anti-age"],
+  ["5","Idratare","Moisturizer ricca nutriente"],
+];
+
+// ─── SPESA ─────────────────────────────
+const SPESA = [
+  {cat:"🥩 Proteine",items:[
+    {n:"Uova",q:"12"},{n:"Petto di pollo",q:"600g"},{n:"Petto di tacchino",q:"250g"},
+    {n:"Salmone fresco",q:"200g"},{n:"Branzino",q:"150g"},{n:"Merluzzo",q:"150g"},
+    {n:"Pesce spada",q:"150g"},{n:"Manzo magro macinato",q:"100g"},{n:"Tonno al naturale",q:"1 lattina"},
+    {n:"Yogurt greco 0%",q:"1kg"},{n:"Ricotta vaccina",q:"100g"},{n:"Formaggio fresco magro",q:"150g"},
+    {n:"Proteine whey polvere",q:"1 confezione"},
+  ]},
+  {cat:"🌾 Carboidrati",items:[
+    {n:"Pane integrale",q:"1 pagnotta"},{n:"Riso integrale",q:"250g"},{n:"Riso basmati",q:"150g"},
+    {n:"Riso bianco",q:"150g"},{n:"Pasta integrale",q:"250g"},{n:"Orzo perlato",q:"150g"},
+    {n:"Farro",q:"150g"},{n:"Quinoa",q:"150g"},{n:"Fiocchi d'avena",q:"300g"},
+    {n:"Patate dolci",q:"150g"},{n:"Patate",q:"150g"},{n:"Muesli integrale",q:"1 confezione"},
+    {n:"Crackers integrali",q:"1 confezione"},
+  ]},
+  {cat:"🍎 Frutta",items:[
+    {n:"Mele",q:"4-5"},{n:"Banane",q:"3-4"},{n:"Arance",q:"2"},{n:"Fragole",q:"1 cestino"},
+    {n:"Frutti di bosco",q:"1 cestino"},{n:"Frutta mista",q:"a piacere"},
+  ]},
+  {cat:"🥦 Verdura",items:[
+    {n:"Broccoli",q:"200g"},{n:"Spinaci",q:"150g"},{n:"Zucchine",q:"400g"},{n:"Pomodori/pomodorini",q:"300g"},
+    {n:"Insalata mista/verde",q:"2 buste"},{n:"Carote",q:"200g"},{n:"Peperoni",q:"1-2"},
+    {n:"Fagiolini",q:"150g"},{n:"Verdure grigliate/miste",q:"300g"},
+  ]},
+  {cat:"🫒 Grassi e condimenti",items:[
+    {n:"Olio EVO",q:"1 bottiglia"},{n:"Mandorle",q:"100g"},{n:"Noci",q:"50g"},
+    {n:"Burro di arachidi 100%",q:"1 vasetto"},{n:"Cioccolato fondente 70%",q:"1 tavoletta"},{n:"Miele",q:"1 vasetto"},
+  ]},
+  {cat:"💊 Integratori — verifica scorte",items:[
+    {n:"Multivitaminico",q:"1/die"},{n:"Vitamina D3 2000UI",q:"1/die"},{n:"Collagene marino",q:"polvere"},
+    {n:"Vitamina C 500mg",q:"2/die"},{n:"Vitamina B12 + Selenio",q:"Lun/Mer/Ven"},{n:"Omega-3",q:"1/die"},
+    {n:"Creatina monoidrato",q:"nuovo"},{n:"Vitamina B6",q:"nuovo"},{n:"Zinco",q:"1/die"},{n:"Magnesio glicinato",q:"1/sera"},
+  ]},
+  {cat:"✨ Beauty",items:[
+    {n:"Gentle cleanser",q:"1"},{n:"Toner sensibile",q:"1"},{n:"Siero Vitamina C",q:"1"},
+    {n:"Retinol 0.25%",q:"1"},{n:"Niacinamide 5%",q:"1"},{n:"Eye cream",q:"1"},
+    {n:"Moisturizer leggero + ricco",q:"2"},{n:"SPF 50+",q:"1"},{n:"Oil cleanser",q:"1"},
+  ]},
+];
+
+// ─── STATE ─────────────────────────────
+let state = {day:null,workout:null,weights:[],bilancia:[],wlogs:{},checked:{}};
+function loadState(){try{const s=localStorage.getItem('elena_v1');if(s)state={...state,...JSON.parse(s)};}catch(e){}}
+function saveState(){try{localStorage.setItem('elena_v1',JSON.stringify(state));}catch(e){}}
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
+
+// ─── NAV ─────────────────────────────
+function goPage(p){
+  document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.nb').forEach(x=>x.classList.remove('active'));
+  document.getElementById('p-'+p).classList.add('active');
+  document.getElementById('n-'+p).classList.add('active');
+  if(p==='peso'){renderWlog();renderBilog();renderStats();}
+  if(p==='spesa')renderSpesa();
+  if(p==='integr')renderIntegr();
+}
+
+// ─── OGGI / PASTI ─────────────────────────────
+function fmtM(m){return (m.p||0)+'P / '+(m.c||0)+'C / '+(m.f||0)+'F';}
+
+function selDay(d,sv=true){
+  state.day=d;if(sv)saveState();
+  Object.keys(MEALS).forEach(k=>{const b=document.getElementById('d-'+k);if(b){b.className='dbtn';if(k===d)b.classList.add('sel');}});
+  const day=MEALS[d];
+  let h=`<div style="font-size:13px;font-weight:700;color:var(--pink-deep);margin-bottom:10px">${day.label} — ${day.activity}</div>`;
+  day.sections.forEach(sec=>{
+    h+=`<div class="meal-section"><div class="meal-head">${sec.t}</div>`;
+    sec.items.forEach(it=>{
+      h+=`<div class="meal-row"><div class="meal-name">${it.n}<div class="meal-macro">${it.k} kcal · ${fmtM(it)}</div></div><div class="meal-qty">${it.q}</div></div>`;
+    });
+    h+=`</div>`;
+  });
+  h+=`<div class="meal-section"><div class="meal-head">➕ Aggiunta giornaliera fissa</div>`;
+  EXTRA.forEach(it=>{
+    h+=`<div class="meal-row"><div class="meal-name">${it.n}<div class="meal-macro">${it.k} kcal · ${fmtM(it)}</div></div><div class="meal-qty">${it.q}</div></div>`;
+  });
+  h+=`</div>`;
+  h+=`<div class="tot-box"><div class="tl">Totale giornata</div><div class="tv">${day.tot.k} kcal</div><div class="tm">${day.tot.p}g proteine · ${day.tot.c}g carboidrati · ${day.tot.f}g grassi</div></div>`;
+  h+=`<div class="box cy">${day.tip}</div>`;
+  document.getElementById('meal-out').innerHTML=h;
+}
+
+// ─── SCHEDA / PALESTRA ─────────────────────────────
+function selW(k,sv=true){
+  state.workout=k;if(sv)saveState();
+  Object.keys(WK).forEach(x=>{const b=document.getElementById('w-'+x);b.className='wbtn';if(x===k)b.classList.add('wsel');});
+  const w=WK[k],today=new Date().toISOString().split('T')[0];
+  let h=`<div class="box"><b>${w.label}</b><br><span style="color:var(--text2)">${w.sub}</span><br><br>${w.why}</div>`;
+  w.ex.forEach((ex,i)=>{
+    const ek=k+'_'+i,logs=state.wlogs[ek]||[],last=logs[logs.length-1],ls=last&&last.sets&&last.sets[0];
+    h+=`<div class="ex-card">
+      <div class="ex-head" onclick="togEx('${ek}')">
+        <div class="ex-num">${i+1}</div>
+        <div class="ex-info"><div class="ex-name">${ex.n}</div>
+        <div class="ex-muscle">${ex.m}${ls?` · Ultimo: ${ls.kg}kg×${ls.reps}`:''}</div></div>
+        <div class="ex-sets">${ex.s}<span class="r">Rec: ${ex.r}</span></div>
+      </div>
+      <div class="ex-body" id="ex-${ek}">
+        <div class="ex-desc">${ex.d}</div>
+        <div class="set-inputs">
+          <div class="set-grp"><label>Kg</label><input type="number" id="kg-${ek}" class="set-inp" placeholder="${ls?ls.kg:'0'}" step="0.5" min="0"></div>
+          <div class="set-grp"><label>Rip</label><input type="number" id="rp-${ek}" class="set-inp" placeholder="${ls?ls.reps:'10'}" min="1"></div>
+          <div class="set-grp"><label>Serie</label><input type="number" id="st-${ek}" class="set-inp" value="1" min="1" max="10"></div>
+        </div>
+        <button class="btn-add" onclick="logSet('${ek}')">+ Registra serie</button>
+        <div class="set-log" id="log-${ek}"></div>
+      </div>
+    </div>`;
+  });
+  document.getElementById('workout-out').innerHTML=h;
+  w.ex.forEach((_,i)=>renderSets(k+'_'+i,today));
+}
+function togEx(id){document.getElementById('ex-'+id).classList.toggle('open');}
+function logSet(ek){
+  const kg=parseFloat(document.getElementById('kg-'+ek).value)||0;
+  const reps=parseInt(document.getElementById('rp-'+ek).value)||10;
+  const sets=parseInt(document.getElementById('st-'+ek).value)||1;
+  const today=new Date().toISOString().split('T')[0];
+  if(!state.wlogs[ek])state.wlogs[ek]=[];
+  let tl=state.wlogs[ek].find(l=>l.date===today);
+  if(!tl){tl={date:today,sets:[]};state.wlogs[ek].push(tl);}
+  for(let s=0;s<sets;s++)tl.sets.push({kg,reps});
+  saveState();renderSets(ek,today);
+  toast(`${sets>1?sets+' serie':'1 serie'} — ${kg}kg × ${reps} 💪`);
+}
+function renderSets(ek,date){
+  const c=document.getElementById('log-'+ek);if(!c)return;
+  const tl=(state.wlogs[ek]||[]).find(l=>l.date===date);
+  if(!tl||!tl.sets.length){c.innerHTML='';return;}
+  c.innerHTML=tl.sets.map((s,i)=>`<div class="set-entry"><span>Serie ${i+1}: <b>${s.kg} kg</b> × <b>${s.reps} rip</b></span><button class="set-del" onclick="delSet('${ek}','${date}',${i})">✕</button></div>`).join('');
+}
+function delSet(ek,date,idx){
+  const tl=(state.wlogs[ek]||[]).find(l=>l.date===date);
+  if(!tl)return;tl.sets.splice(idx,1);saveState();renderSets(ek,date);
+}
+
+// ─── PESO ─────────────────────────────
+function saveW(){
+  const date=document.getElementById('wd').value,kg=parseFloat(document.getElementById('wv').value);
+  if(!date||isNaN(kg)||kg<35||kg>120){toast('⚠️ Inserisci un peso valido');return;}
+  state.weights=state.weights.filter(w=>w.date!==date);
+  state.weights.push({date,kg});state.weights.sort((a,b)=>a.date.localeCompare(b.date));
+  saveState();document.getElementById('wv').value='';renderWlog();renderStats();
+  toast(`✅ ${kg} kg salvati!`);
+}
+function saveBilancia(){
+  const bf=parseFloat(document.getElementById('bfat').value),bm=parseFloat(document.getElementById('bmus').value);
+  if(isNaN(bf)&&isNaN(bm)){toast('⚠️ Inserisci almeno un dato');return;}
+  const date=new Date().toISOString().split('T')[0];
+  state.bilancia=state.bilancia.filter(v=>v.date!==date);
+  state.bilancia.push({date,bf:isNaN(bf)?null:bf,bm:isNaN(bm)?null:bm});
+  saveState();document.getElementById('bfat').value='';document.getElementById('bmus').value='';
+  renderBilog();renderStats();toast('✅ Dati bilancia salvati!');
+}
+function fmt(d){return new Date(d+'T12:00:00').toLocaleDateString('it-IT',{day:'numeric',month:'short',year:'2-digit'});}
+function renderWlog(){
+  const log=[...state.weights].reverse().slice(0,8);
+  document.getElementById('wlog').innerHTML=log.length?log.map((w,i)=>{
+    const prev=log[i+1],diff=prev?(w.kg-prev.kg).toFixed(1):null;
+    const dc=diff>0?'var(--green)':diff<0?'var(--orange)':'var(--text2)';
+    return `<div class="log-entry"><div><b>${w.kg} kg</b><div style="font-size:11px;color:var(--text2)">${fmt(w.date)}</div></div><div style="display:flex;align-items:center;gap:8px">${diff!==null?`<span style="font-size:11px;font-weight:700;color:${dc}">${diff>0?'+':''}${diff} kg</span>`:''}<button class="log-del" onclick="delW('${w.date}')">✕</button></div></div>`;
+  }).join(''):'<div class="empty">⚖️ Nessun dato ancora</div>';
+}
+function renderBilog(){
+  const log=[...state.bilancia].reverse().slice(0,5);
+  document.getElementById('bilog').innerHTML=log.length?log.map(v=>`<div class="log-entry"><span style="font-size:11px;color:var(--text2)">${fmt(v.date)}</span><span style="font-size:12.5px;font-weight:700">${v.bf?'Grasso '+v.bf+'% ':''}${v.bm?'· Muscolo '+v.bm+'%':''}</span></div>`).join(''):'<div class="empty"><small>Nessun dato ancora</small></div>';
+}
+function renderStats(){
+  const w=state.weights,bi=state.bilancia;
+  const el=document.getElementById('peso-stats');
+  const baseP=50.85,baseF=20.7,baseM=42.4;
+  const curP=w.length?w[w.length-1].kg:baseP;
+  const curF=bi.length?(bi.filter(x=>x.bf).slice(-1)[0]?.bf??baseF):baseF;
+  const curM=bi.length?(bi.filter(x=>x.bm).slice(-1)[0]?.bm??baseM):baseM;
+  const dP=(curP-baseP).toFixed(1),dM=(curM-baseM).toFixed(1),dF=(curF-baseF).toFixed(1);
+  el.innerHTML=`<div class="card">
+    <div class="card-title">Rispetto al 29/07 (partenza)</div>
+    <div class="stat-grid">
+      <div class="stat-box"><div class="stat-val">${curP}</div><div class="stat-lbl">Peso kg</div></div>
+      <div class="stat-box"><div class="stat-val" style="color:${dP>=0?'var(--green)':'var(--orange)'}">${dP>0?'+':''}${dP}</div><div class="stat-lbl">Δ peso — ok se sale</div></div>
+      <div class="stat-box"><div class="stat-val">${curM}%</div><div class="stat-lbl">Muscolo</div></div>
+      <div class="stat-box"><div class="stat-val" style="color:${dM>=0?'var(--green)':'var(--orange)'}">${dM>0?'+':''}${dM}</div><div class="stat-lbl">Δ muscolo — obiettivo ↑</div></div>
+      <div class="stat-box"><div class="stat-val">${curF}%</div><div class="stat-lbl">Grasso</div></div>
+      <div class="stat-box"><div class="stat-val" style="color:${dF<=0?'var(--green)':'var(--text2)'}">${dF>0?'+':''}${dF}</div><div class="stat-lbl">Δ grasso — stabile è ok</div></div>
+    </div>
+    <div class="box" style="margin-bottom:0">Il peso che sale leggermente è un segnale positivo in questo piano — significa che si sta costruendo muscolo.</div>
+  </div>`;
+}
+function delW(d){state.weights=state.weights.filter(w=>w.date!==d);saveState();renderWlog();renderStats();}
+
+// ─── INTEGRATORI ─────────────────────────────
+function renderIntegr(){
+  document.getElementById('integr-schema').innerHTML=INTEGR_SCHEMA.map(([t,v])=>`<div class="log-entry"><span>${t}</span><span style="font-size:11.5px;color:var(--text2);text-align:right;flex:1;margin-left:10px">${v}</span></div>`).join('');
+  document.getElementById('integr-cards').innerHTML=INTEGR_CARDS.map(c=>`
+    <div class="i-card" style="background:${c.bg};border-color:${c.bd}">
+      <div class="i-icon" style="background:${c.bd}">${c.icon}</div>
+      <div><div class="i-title" style="color:${c.tc}">${c.title}</div>
+      <div class="i-sub" style="color:${c.tc}">${c.note}</div>
+      <div class="i-when" style="color:${c.tc}">${c.dose}</div></div>
+    </div>`).join('');
+  document.getElementById('am-routine').innerHTML=AM_ROUTINE.map(([n,t,p])=>`<div class="skincare-step"><div class="step-n">${n}</div><div><div class="step-t">${t}</div><div class="step-p">${p}</div></div></div>`).join('');
+  document.getElementById('pm-routine').innerHTML=PM_ROUTINE.map(([n,t,p])=>`<div class="skincare-step"><div class="step-n">${n}</div><div><div class="step-t">${t}</div><div class="step-p">${p}</div></div></div>`).join('');
+}
+
+// ─── SPESA ─────────────────────────────
+function renderSpesa(){
+  let total=0,done=0,h='';
+  SPESA.forEach((cat,ci)=>{
+    h+=`<div class="card"><div class="spesa-cat">${cat.cat}</div>`;
+    cat.items.forEach((item,ii)=>{
+      const key=`${ci}_${ii}`,chk=state.checked[key]||false;
+      total++;if(chk)done++;
+      h+=`<div class="spesa-item">
+        <input type="checkbox" ${chk?'checked':''} onchange="toggleItem('${key}',this.checked)">
+        <span class="spesa-name${chk?' done':''}" id="sn-${key}">${item.n}</span>
+        <span class="spesa-qty">${item.q}</span>
+      </div>`;
+    });
+    h+='</div>';
+  });
+  document.getElementById('spesa-out').innerHTML=h;
+  updateSpesaProgress(done,total);
+}
+function updateSpesaProgress(done,total){
+  if(done===undefined){
+    done=0;total=0;
+    SPESA.forEach((cat,ci)=>cat.items.forEach((_,ii)=>{total++;if(state.checked[`${ci}_${ii}`])done++;}));
+  }
+  const pct=total?Math.round(done/total*100):0;
+  document.getElementById('spesa-done').textContent=`${done} di ${total} articoli`;
+  document.getElementById('spesa-pct').textContent=pct+'%';
+  document.getElementById('spesa-bar').style.width=pct+'%';
+}
+function toggleItem(key,val){
+  state.checked[key]=val;saveState();
+  const el=document.getElementById('sn-'+key);
+  if(el)el.className='spesa-name'+(val?' done':'');
+  updateSpesaProgress();
+}
+function resetSpesa(){state.checked={};saveState();renderSpesa();toast('🔄 Lista azzerata!');}
+function checkAll(){
+  let allDone=true;
+  SPESA.forEach((cat,ci)=>cat.items.forEach((_,ii)=>{if(!state.checked[`${ci}_${ii}`])allDone=false;}));
+  SPESA.forEach((cat,ci)=>cat.items.forEach((_,ii)=>{state.checked[`${ci}_${ii}`]=!allDone;}));
+  saveState();renderSpesa();toast(allDone?'🔄 Azzerate!':'✅ Tutto segnato!');
+}
+
+// ─── INIT ─────────────────────────────
+function initToday(){
+  const t=new Date().toISOString().split('T')[0];
+  document.getElementById('wd').value=t;
+  const map=['dom','lun','mar','mer','gio','ven','sab'];
+  const todayKey=map[new Date().getDay()];
+  selDay(state.day||todayKey,false);
+  if(state.workout)selW(state.workout,false);
+}
+loadState();
+initToday();
+</script>
+</body>
+</html>
